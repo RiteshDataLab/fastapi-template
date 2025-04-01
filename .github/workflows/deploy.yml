@@ -31,6 +31,6 @@ jobs:
 
     - name: Deploy to GKE
       run: |
-        kubectl apply -f deployment.yaml
-        kubectl apply -f hpa.yaml
-        kubectl apply -f service.yaml
+        kubectl apply -f K8s/deployment.yaml
+        kubectl apply -f K8s/hpa.yaml
+        kubectl apply -f K8s/service.yaml
