@@ -28,6 +28,32 @@ jobs:
     - name: Configure Docker
       run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
+    # ✅ Install SonarQube Scanner
+    - name: Install SonarQube Scanner
+      run: |
+        echo "🔍 Installing SonarQube Scanner..."
+        SONAR_VERSION="7.0.0.4796"
+        DOWNLOAD_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_VERSION-linux-x64.zip"
+
+        curl -fSL -o sonar-scanner.zip "$DOWNLOAD_URL"
+        unzip sonar-scanner.zip
+        sudo mv sonar-scanner-* /opt/sonar-scanner
+
+        echo 'export PATH="/opt/sonar-scanner/bin:$PATH"' | sudo tee -a /etc/profile
+        source /etc/profile
+
+        echo "✅ SonarQube Scanner Installed Successfully"
+        /opt/sonar-scanner/bin/sonar-scanner --version
+
+    # ✅ Run SonarQube Analysis
+    - name: Run SonarQube Analysis
+      run: |
+        /opt/sonar-scanner/bin/sonar-scanner \
+          -Dsonar.projectKey=fastapi-project \
+          -Dsonar.sources=app \
+          -Dsonar.host.url=http://<SONARQUBE_INSTANCE_IP>:9000 \
+          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+
     - name: Build and Push Docker Image
       run: |
         docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-repo/fastapi-app:$GITHUB_SHA .
