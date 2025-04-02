@@ -51,7 +51,7 @@ jobs:
         /opt/sonar-scanner/bin/sonar-scanner \
           -Dsonar.projectKey=fastapi-project \
           -Dsonar.sources=app \
-          -Dsonar.host.url=http://<SONARQUBE_INSTANCE_IP>:9000 \
+          -Dsonar.host.url=http://35.226.115.150:9000/ \
           -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
 
     - name: Build and Push Docker Image
