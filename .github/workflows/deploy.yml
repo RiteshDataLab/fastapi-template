@@ -13,33 +13,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Install SonarQube Scanner
-      run: |
-        echo "Fetching SonarQube Scanner..."
-        SONAR_VERSION="7.0.0.4796"
-        echo "Using SonarQube Scanner Version: $SONAR_VERSION"
-        DOWNLOAD_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_VERSION-linux-x64.zip"
-        echo "Downloading from $DOWNLOAD_URL..."
-        curl -fSL -o sonar-scanner.zip "$DOWNLOAD_URL"
-        if [ ! -s sonar-scanner.zip ]; then
-          echo "ERROR: Download failed, sonar-scanner.zip is empty!"
-          exit 1
-        fi
-        unzip sonar-scanner.zip
-        sudo mv sonar-scanner-* /opt/sonar-scanner
-        echo 'export PATH="/opt/sonar-scanner/bin:$PATH"' | sudo tee -a /etc/profile
-        source /etc/profile
-        echo " Verifying SonarQube Scanner installation..."
-        /opt/sonar-scanner/bin/sonar-scanner --version
-
-    - name: Run SonarQube Analysis
-      run: |
-        /opt/sonar-scanner/bin/sonar-scanner \
-        -Dsonar.projectKey=Be-odr \
-        -Dsonar.sources=src \
-        -Dsonar.host.url=http://35.208.148.105:9000 \
-        -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-
     - name: Authenticate with GCP
       uses: google-github-actions/auth@v1
       with:
