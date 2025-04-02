@@ -35,7 +35,7 @@ jobs:
     - name: Run SonarQube Analysis
       run: |
         /opt/sonar-scanner/bin/sonar-scanner \
-        -Dsonar.projectKey=fe-odr \
+        -Dsonar.projectKey=Be-odr \
         -Dsonar.sources=src \
         -Dsonar.host.url=http://35.208.148.105:9000 \
         -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
