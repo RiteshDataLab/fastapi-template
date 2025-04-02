@@ -37,6 +37,14 @@ jobs:
       run: |
         gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER }} --zone ${{ secrets.GKE_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
 
+    - name: Run SonarQube Analysis
+      run: |
+        /opt/sonar-scanner/bin/sonar-scanner \
+          -Dsonar.projectKey=Be-odr \
+          -Dsonar.sources=src \
+          -Dsonar.host.url=http://35.208.148.105:9000 \
+          -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+          
     - name: Deploy to GKE
       run: |
         kubectl apply -f k8s/deployment.yaml --validate=false
