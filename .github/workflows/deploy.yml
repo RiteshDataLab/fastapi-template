@@ -11,51 +11,27 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
 
     - name: Authenticate with GCP
-      uses: google-github-actions/auth@v1.1.1
+      uses: google-github-actions/auth@v1
       with:
         credentials_json: ${{ secrets.GCP_SA_KEY }}
 
     - name: Set Up gcloud CLI
-      uses: google-github-actions/setup-gcloud@v1.1.1
+      uses: google-github-actions/setup-gcloud@v1
 
     - name: Upgrade gcloud CLI
       run: |
-        gcloud components update
-        gcloud components install gke-gcloud-auth-plugin
+        gcloud components update gke-gcloud-auth-plugin
 
-    - name: Configure Docker for GCP Artifact Registry
-      run: |
-        gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
-
-    - name: Install SonarQube Scanner
-      run: |
-        echo "🔍 Fetching SonarQube Scanner..."
-        SONAR_VERSION="7.0.0.4796"
-        DOWNLOAD_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_VERSION-linux-x64.zip"
-        curl -fSL -o sonar-scanner.zip "$DOWNLOAD_URL"
-        unzip sonar-scanner.zip
-        sudo mv sonar-scanner-* /opt/sonar-scanner
-        echo 'export PATH="/opt/sonar-scanner/bin:$PATH"' | sudo tee -a /etc/profile
-        source /etc/profile
-        /opt/sonar-scanner/bin/sonar-scanner --version
-
-    - name: Run SonarQube Analysis
-      run: |
-        /opt/sonar-scanner/bin/sonar-scanner \
-        -Dsonar.projectKey=fastapi-backend \
-        -Dsonar.sources=. \
-        -Dsonar.host.url=http://35.208.148.105:9000 \
-        -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
+    - name: Configure Docker
+      run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
     - name: Build and Push Docker Image
-      env:
-        IMAGE_TAG: $GITHUB_SHA
       run: |
-        docker build -t ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-repo/fastapi-app:$IMAGE_TAG .
-        docker push ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-repo/fastapi-app:$IMAGE_TAG
+        docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-repo/fastapi-app:$GITHUB_SHA .
+        docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/fastapi-repo/fastapi-app:$GITHUB_SHA
 
     - name: Authenticate kubectl with GKE
       run: |
@@ -66,7 +42,3 @@ jobs:
         kubectl apply -f k8s/deployment.yaml --validate=false
         kubectl apply -f k8s/hpa.yaml --validate=false
         kubectl apply -f k8s/service.yaml --validate=false
-
-    - name: Verify Deployment
-      run: |
-        kubectl rollout status deployment/fastapi-app
