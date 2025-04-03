@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: us-central1-docker.pkg.dev/cogent-elevator-448408-n8/fastapi-repo/fastapi-app:v1
+        image: us-central1-docker.pkg.dev/cogent-elevator-448408-n8/fastapi-repo/fastapi-app:latest
         ports:
         - containerPort: 8000
         resources:
