@@ -42,10 +42,10 @@ jobs:
         echo 'export PATH="/opt/sonar-scanner/bin:$PATH"' | sudo tee -a /etc/profile
         source /etc/profile
 
-        echo "✅ SonarQube Scanner Installed Successfully"
+        echo " SonarQube Scanner Installed Successfully"
         /opt/sonar-scanner/bin/sonar-scanner --version
 
-    # ✅ Run SonarQube Analysis
+    #  Run SonarQube Analysis
     - name: Run SonarQube Analysis
       run: |
         /opt/sonar-scanner/bin/sonar-scanner \
