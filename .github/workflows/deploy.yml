@@ -45,7 +45,7 @@ jobs:
         echo " SonarQube Scanner Installed Successfully"
         /opt/sonar-scanner/bin/sonar-scanner --version
 
-    #  Run SonarQube Analysis
+    #  Run SonarQube Analysiss
     - name: Run SonarQube Analysis
       run: |
         /opt/sonar-scanner/bin/sonar-scanner \
